@@ -3,7 +3,7 @@ namespace CCtlCheck.ConstraintSemirings
 [<AutoOpen>]
 module CSRTypes =
     /// A constraint semiring is defined over a domain, and contains the following elements:
-    ///   - An additive projection operator, project/+
+    ///   - An additive choice operator, choose/+
     ///   - A multiplicative combination operator, combine/*
     ///   - A least element bottom/0
     ///   - A largest element top/1
@@ -19,8 +19,8 @@ module CSRTypes =
     /// This is required for the CTL model checking problem to be decidable.
     type CSR<'D> when 'D : comparison =
         {
-            project: Set<'D> -> 'D;
-            combine: Set<'D> -> 'D;
+            choose: Set<'D> -> 'D;
+            combine: 'D -> 'D -> 'D;
             bottom: 'D;
             top: 'D
         }

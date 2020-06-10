@@ -1,11 +1,79 @@
 namespace CCtlCheck.ConstraintSemirings
 
 module CSR =
+    /// The partial order induced by the choice operator
+    let below (c: CSR<'D>) (a, b: 'D) : bool = c.choose (set [a; b]) = b
+    
     /// The Cartesian product of two c-semirings is also a c-semiring
     let product (c1: CSR<'D1>) (c2: CSR<'D2>) : CSR<'D1 * 'D2> =
         {
-            project = fun s -> (c1.project (Set.map fst s), c2.project (Set.map snd s));
-            combine = fun s -> (c1.combine (Set.map fst s), c2.combine (Set.map snd s));
+            choose = fun s -> (c1.choose (Set.map fst s), c2.choose (Set.map snd s));
+            combine = fun x y -> (c1.combine (fst x) (fst y), c2.combine (snd x) (snd y));
             bottom = (c1.bottom, c2.bottom);
             top = (c1.top, c2.top);
         }
+
+module Examples =
+    
+    /// The Boolean c-semiring implements usual model checking
+    let boolean : CSR<bool> =
+        {
+            choose = fun a -> Set.fold (fun x y -> x || y) false a;
+            combine = fun x y -> x && y;
+            bottom = false;
+            top = true;
+        }
+
+    /// The optimization c-semiring can be used for e.g. pricing or delays
+    let optimization : CSR<float> =
+        {
+            choose = fun a -> Set.fold min infinity a;
+            combine = fun x y -> x + y;
+            bottom = infinity;
+            top = 0.0;
+        }
+
+    /// The max/min c-semiring can be used for e.g. bandwidth
+    let maxMin : CSR<float> =
+        {
+            choose = fun a -> Set.fold max 0.0 a;
+            combine = min;
+            bottom = 0.0;
+            top = infinity;
+        }
+
+    /// The probabilistic c-semiring can be used for e.g. performance or rates
+    let probabilistic : CSR<float> =
+        {
+            choose = fun a -> Set.fold max 0.0 a;
+            combine = fun x y -> x * y;
+            bottom = 0.0;
+            top = 1.0;
+        }
+
+    /// The fuzzy c-semiring can be used for e.g. performance or rates
+    let fuzzy : CSR<float> =
+        {
+            choose = fun a -> Set.fold max 0.0 a;
+            combine = min;
+            bottom = 0.0;
+            top = 1.0;
+        }
+
+    /// The set-based c-semiring can be instantiated with e.g. capabilities or access rights
+    let setCSR<'S when 'S : comparison> (s : Set<'S>) : CSR<Set<'S>> =
+        {
+            choose = fun a -> Set.fold (Set.union) Set.empty a;
+            combine = Set.intersect;
+            bottom = Set.empty;
+            top = s;
+        }
+
+    /// Here is a very basic access rights construction
+    type AccessRights =
+        | Confidential
+        | Public
+
+    let allRights = set [Confidential; Public]
+
+    let accessRights : CSR<Set<AccessRights>> = setCSR allRights
