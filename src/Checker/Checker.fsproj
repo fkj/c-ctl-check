@@ -8,4 +8,10 @@
     <Compile Include="Library.fs" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\TransitionSystems\TransitionSystems.fsproj" />
+    <ProjectReference Include="..\CCtl\CCtl.fsproj" />
+    <ProjectReference Include="..\ConstraintSemirings\ConstraintSemirings.fsproj" />
+  </ItemGroup>
+
 </Project>

@@ -1,4 +1,4 @@
-namespace CCtl
+namespace CCtlCheck.CCtl
 
 module CCtlTypes =
 

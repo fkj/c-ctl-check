@@ -8,4 +8,8 @@
     <Compile Include="Library.fs" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\CCtl\CCtl.fsproj" />
+  </ItemGroup>
+
 </Project>

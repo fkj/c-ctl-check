@@ -8,4 +8,8 @@
     <Compile Include="Library.fs" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\ConstraintSemirings\ConstraintSemirings.fsproj" />
+  </ItemGroup>
+
 </Project>
