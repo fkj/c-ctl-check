@@ -16,6 +16,7 @@ module CSR =
 module Examples =
     
     /// The Boolean c-semiring implements usual model checking
+    /// Distributive
     let boolean : CSR<bool> =
         {
             choose = fun a -> Set.fold (fun x y -> x || y) false a;
@@ -25,6 +26,7 @@ module Examples =
         }
 
     /// The optimization c-semiring can be used for e.g. pricing or delays
+    /// Non-distributive
     let optimization : CSR<float> =
         {
             choose = fun a -> Set.fold min infinity a;
@@ -34,6 +36,7 @@ module Examples =
         }
 
     /// The max/min c-semiring can be used for e.g. bandwidth
+    /// Distributive
     let maxMin : CSR<float> =
         {
             choose = fun a -> Set.fold max 0.0 a;
@@ -43,6 +46,7 @@ module Examples =
         }
 
     /// The probabilistic c-semiring can be used for e.g. performance or rates
+    /// Non-distributive
     let probabilistic : CSR<float> =
         {
             choose = fun a -> Set.fold max 0.0 a;
@@ -52,6 +56,7 @@ module Examples =
         }
 
     /// The fuzzy c-semiring can be used for e.g. performance or rates
+    /// Distributive
     let fuzzy : CSR<float> =
         {
             choose = fun a -> Set.fold max 0.0 a;
@@ -61,6 +66,7 @@ module Examples =
         }
 
     /// The set-based c-semiring can be instantiated with e.g. capabilities or access rights
+    /// Distributive
     let setCSR<'S when 'S : comparison> (s : Set<'S>) : CSR<Set<'S>> =
         {
             choose = fun a -> Set.fold (Set.union) Set.empty a;
