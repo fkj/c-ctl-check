@@ -13,6 +13,10 @@ module CSR =
             top = (c1.top, c2.top);
         }
 
+    type CSR<'D when 'D : comparison> with
+        member this.choose2 (x : 'D) (y : 'D) =
+            this.choose (set [x; y])
+
 module Examples =
     
     /// The Boolean c-semiring implements usual model checking
