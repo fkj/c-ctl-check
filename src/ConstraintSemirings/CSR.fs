@@ -69,6 +69,16 @@ module Examples =
             top = 1.0;
         }
 
+    /// The power consumption c-semiring can be used to determine power used
+    /// Distributive
+    let power : CSR<float> =
+        {
+            choose = fun a -> Set.fold min infinity a;
+            combine = max;
+            bottom = infinity;
+            top = 0.0
+        }
+
     /// The set-based c-semiring can be instantiated with e.g. capabilities or access rights
     /// Distributive
     let setCSR<'S when 'S : comparison> (s : Set<'S>) : CSR<Set<'S>> =
