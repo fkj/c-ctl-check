@@ -14,12 +14,12 @@ module CCtlTypes =
         | Function of string * Formula<'D> list
         | Choose of Formula<'D> * Formula<'D>
         | Combine of Formula<'D> * Formula<'D>
-        | Temporal of Quantifier * Operator<'D>
+        | Temporal of Quantifier * Formula<'D> * Operator<'D> * Formula<'D>
         | Next of Quantifier * Formula<'D>
     and Quantifier =
         | Glb
         | Sum
         | Product
     and Operator<'D> =
-        | Until of Formula<'D> * Formula<'D>
-        | Release of Formula<'D> * Formula<'D>
+        | Until
+        | Release
