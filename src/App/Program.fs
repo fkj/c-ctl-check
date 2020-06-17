@@ -1,4 +1,4 @@
-﻿// Learn more about F# at http://fsharp.org
+﻿module CCtlCheck.App
 
 open System
 
