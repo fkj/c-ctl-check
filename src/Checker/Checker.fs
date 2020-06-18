@@ -14,7 +14,7 @@ module Checker =
     | _ -> []
 
     let rec checkCTL<'D when 'D : comparison>
-        (M: TransitionSystem) (formula: Formula<CSR<'D>>) (csr: CSR<'D>) : 'D list =
+        (M: TransitionSystem) (formula: Formula<'D>) (csr: CSR<'D>) : 'D list =
         match formula with
         | Zero -> List.replicate (numberOfStates M) csr.bottom
         | One -> List.replicate (numberOfStates M) csr.top
@@ -29,8 +29,8 @@ module Checker =
         | Combine(f1,f2) -> let valuation1 : 'D list = checkCTL<'D> M f1 csr
                             let valuation2 : 'D list = checkCTL<'D> M f2 csr
                             in List.map2 (csr.combine) valuation1 valuation2
-        | Temporal(q,f1,op,f2) -> let valuation1 : 'D list = checkCTL<'D> M f1 csr
-                                  let valuation2 : 'D list = checkCTL<'D> M f2 csr
+        | Temporal(q,f1,op,f2) -> let v1 : 'D list = checkCTL<'D> M f1 csr
+                                  let v2 : 'D list = checkCTL<'D> M f2 csr
                                   let start : 'D = match op with
                                                    | Until -> csr.bottom
                                                    | Release -> csr.top
@@ -38,10 +38,10 @@ module Checker =
                                   let mutable v' : 'D list = v
                                   while List.forall2 (=) v' v do
                                       v' <- v
-                                      let formula : Formula<CSR<'D>> =
+                                      let formula : Formula<'D> =
                                           match op with
-                                          | Until -> Choose(Proposition "v2", Combine(Proposition "v1", Next(q, Proposition "v'")))
-                                          | Release -> Combine(Proposition "v2", Choose(Proposition "v1", Next(q, Proposition "v'")))
+                                          | Until -> Choose(Valuation v2, Combine(Valuation v1, Next(q, Valuation v')))
+                                          | Release -> Combine(Valuation v2, Choose(Valuation v1, Next(q, Valuation v')))
                                       v <- checkCTL<'D> M formula csr
                                   v
         | Next(q,f) -> let v' : 'D list = checkCTL M f csr
@@ -58,6 +58,7 @@ module Checker =
                            let next : State list = nextStates s
                            List.fold (fun (result : 'D) (state : State) -> quantifier (v'.Item(state)) result) start next
                        in List.map (computeState) v
+        | Valuation(v) -> v
 
 module Examples =
     open Checker
