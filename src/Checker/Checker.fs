@@ -2,7 +2,6 @@ namespace CCtlCheck.Checker
 
 module Checker =
     open CCtlCheck.TransitionSystems.TSTypes
-    open CCtlCheck.TransitionSystems.TS
     open CCtlCheck.CCtl.CCtlTypes
     open CCtlCheck.ConstraintSemirings.CSRTypes
     open CCtlCheck.ConstraintSemirings.CSR
@@ -14,11 +13,11 @@ module Checker =
     | _ -> []
 
     let rec checkCTL<'D when 'D : comparison>
-        (M: TransitionSystem) (formula: Formula<'D>) (csr: CSR<'D>) : 'D list =
+        (M: TransitionSystem<'D>) (formula: Formula<'D>) (csr: CSR<'D>) : 'D list =
         match formula with
-        | Zero -> List.replicate (numberOfStates M) csr.bottom
-        | One -> List.replicate (numberOfStates M) csr.top
-        | Proposition(p) -> Map.find p (getProposition M)
+        | Zero -> List.replicate M.states.Length csr.bottom
+        | One -> List.replicate M.states.Length csr.top
+        | Proposition(p) -> Map.find p M.propositions
         | Function(fname,formulas) -> let func : 'D list -> 'D = Map.find fname csr.functions
                                       let valuations : 'D list list = List.map (fun f -> checkCTL<'D> M f csr) formulas
                                       let valuationColumns = transpose valuations
@@ -34,7 +33,7 @@ module Checker =
                                   let start : 'D = match op with
                                                    | Until -> csr.bottom
                                                    | Release -> csr.top
-                                  let mutable v : 'D list = List.replicate (numberOfStates M) start
+                                  let mutable v : 'D list = List.replicate M.states.Length start
                                   let mutable v' : 'D list = v
                                   while List.forall2 (=) v' v do
                                       v' <- v
@@ -53,9 +52,9 @@ module Checker =
                                         | Sum -> csr.bottom
                                         | Product -> csr.top
                                         | Glb -> csr.top
-                       let v : State list = states M
+                       let v : State list = M.states
                        let computeState (s : State) : 'D =
-                           let next : State list = nextStates s
+                           let next : State list = M.nextStates s
                            List.fold (fun (result : 'D) (state : State) -> quantifier (v'.Item(state)) result) start next
                        in List.map (computeState) v
         | Valuation(v) -> v
@@ -64,5 +63,6 @@ module Examples =
     open Checker
     open CCtlCheck.ConstraintSemirings.Examples
     open CCtlCheck.CCtl.CCtlTypes
+    open CCtlCheck.TransitionSystems.Examples
     
-    let ex1 = checkCTL<float> () Zero power
+    let ex1 = checkCTL<float> power1 (Temporal(Sum, Zero, Until, Proposition("v"))) power

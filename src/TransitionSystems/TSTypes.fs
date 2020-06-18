@@ -1,5 +1,11 @@
 namespace CCtlCheck.TransitionSystems
 
 module TSTypes =
-    type TransitionSystem = unit
     type State = int
+    
+    type TransitionSystem<'D> =
+        {
+            states : State list;
+            nextStates : State -> State list;
+            propositions : Map<string, 'D list>;
+        }
