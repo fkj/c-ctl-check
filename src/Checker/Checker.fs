@@ -42,6 +42,7 @@ module Checker =
                                           | Until -> Choose(Valuation v2, Combine(Valuation v1, Next(q, Valuation v')))
                                           | Release -> Combine(Valuation v2, Choose(Valuation v1, Next(q, Valuation v')))
                                       v <- checkCTL<'D> M formula csr
+                                      printfn "%A" v
                                   v
         | Next(q,f) -> let v' : 'D list = checkCTL M f csr
                        let quantifier : 'D -> 'D -> 'D = match q with
@@ -64,5 +65,12 @@ module Examples =
     open CCtlCheck.ConstraintSemirings.Examples
     open CCtlCheck.CCtl.CCtlTypes
     open CCtlCheck.TransitionSystems.Examples
-    
+
+    /// This is the pen-and-paper example from the presentations
     let ex1 = checkCTL<float> power1 (Temporal(Sum, Zero, Until, Proposition("v"))) power
+
+    /// These are the TMR examples from B&K figure 6.3
+    let tmr1 = checkCTL<bool> tmr (Temporal(Sum, Zero, Until, Function("not", [Proposition("down")]))) boolean
+    let tmr2 = checkCTL<bool> tmr (Temporal(Product, Zero, Until, Function("not", [Proposition("down")]))) boolean
+    let tmr3 = checkCTL<bool> tmr (Temporal(Product, Zero, Until, Temporal(Sum, One, Release, Proposition("up3")))) boolean
+    let tmr4 = checkCTL<bool> tmr (Temporal(Product, Choose(Proposition("up3"), Proposition("up2")), Until, Proposition("down"))) boolean

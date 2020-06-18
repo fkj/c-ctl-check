@@ -28,7 +28,7 @@ module Examples =
             combine = fun x y -> x && y;
             bottom = false;
             top = true;
-            functions = Map.empty;
+            functions = Map [("not", fun xs -> match xs with [x] -> not x | _ -> failwith "WRONG APPLICATION OF AUX FUNCTION NOT")];
         }
 
     /// The optimization c-semiring can be used for e.g. pricing or delays
