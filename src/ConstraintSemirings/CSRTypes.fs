@@ -8,6 +8,9 @@ module CSRTypes =
     ///   - A least element bottom/0
     ///   - A largest element top/1
     ///
+    /// The map of functions contains any additional functions defined over the domain.
+    /// These may be used to specify c-CTL properties.
+    ///
     /// The following properties must hold of the multiplicative operator:
     ///   - Binary associative
     ///   - Commutative
@@ -22,5 +25,6 @@ module CSRTypes =
             choose: Set<'D> -> 'D;
             combine: 'D -> 'D -> 'D;
             bottom: 'D;
-            top: 'D
+            top: 'D;
+            functions: Map<string, 'D list -> 'D>
         }

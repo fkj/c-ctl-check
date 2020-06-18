@@ -11,6 +11,7 @@ module CSR =
             combine = fun x y -> (c1.combine (fst x) (fst y), c2.combine (snd x) (snd y));
             bottom = (c1.bottom, c2.bottom);
             top = (c1.top, c2.top);
+            functions = Map.empty; // TODO: fix this so additional functions are not removed
         }
 
     type CSR<'D when 'D : comparison> with
@@ -27,6 +28,7 @@ module Examples =
             combine = fun x y -> x && y;
             bottom = false;
             top = true;
+            functions = Map.empty;
         }
 
     /// The optimization c-semiring can be used for e.g. pricing or delays
@@ -37,6 +39,7 @@ module Examples =
             combine = fun x y -> x + y;
             bottom = infinity;
             top = 0.0;
+            functions = Map.empty;
         }
 
     /// The max/min c-semiring can be used for e.g. bandwidth
@@ -47,6 +50,7 @@ module Examples =
             combine = min;
             bottom = 0.0;
             top = infinity;
+            functions = Map.empty;
         }
 
     /// The probabilistic c-semiring can be used for e.g. performance or rates
@@ -57,6 +61,7 @@ module Examples =
             combine = fun x y -> x * y;
             bottom = 0.0;
             top = 1.0;
+            functions = Map.empty;
         }
 
     /// The fuzzy c-semiring can be used for e.g. performance or rates
@@ -67,6 +72,7 @@ module Examples =
             combine = min;
             bottom = 0.0;
             top = 1.0;
+            functions = Map.empty;
         }
 
     /// The power consumption c-semiring can be used to determine power used
@@ -76,7 +82,8 @@ module Examples =
             choose = fun a -> Set.fold min infinity a;
             combine = max;
             bottom = infinity;
-            top = 0.0
+            top = 0.0;
+            functions = Map.empty;
         }
 
     /// The set-based c-semiring can be instantiated with e.g. capabilities or access rights
@@ -87,6 +94,7 @@ module Examples =
             combine = Set.intersect;
             bottom = Set.empty;
             top = s;
+            functions = Map.empty;
         }
 
     /// Here is a very basic access rights construction

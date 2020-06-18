@@ -9,13 +9,20 @@ module Checker =
 
     open System.Collections.Generic
 
+    let rec transpose = function
+    | (_::_)::_ as m -> List.map List.head m :: transpose (List.map List.tail m)
+    | _ -> []
+
     let rec checkCTL<'D when 'D : comparison>
         (M: TransitionSystem) (formula: Formula<CSR<'D>>) (csr: CSR<'D>) : 'D list =
         match formula with
         | Zero -> List.replicate (numberOfStates M) csr.bottom
         | One -> List.replicate (numberOfStates M) csr.top
         | Proposition(p) -> [] // should look up valuation of p from TS and apply it
-        | Function(func,f) -> [] // should look up function f from CSR and apply it
+        | Function(fname,formulas) -> let func : 'D list -> 'D = Map.find fname csr.functions
+                                      let valuations : 'D list list = List.map (fun f -> checkCTL<'D> M f csr) formulas
+                                      let valuationColumns = transpose valuations
+                                      in List.map func valuationColumns
         | Choose(f1,f2) -> let valuation1 : 'D list = checkCTL<'D> M f1 csr
                            let valuation2 : 'D list = checkCTL<'D> M f2 csr
                            in List.map2 (csr.choose2) valuation1 valuation2
@@ -38,7 +45,6 @@ module Checker =
                                       v <- checkCTL<'D> M formula csr
                                   v
         | Next(q,f) -> let v' : 'D list = checkCTL M f csr
-                       let S : State list = states M
                        let quantifier : 'D -> 'D -> 'D = match q with
                                                          | Sum -> csr.choose2
                                                          | Product -> csr.combine
