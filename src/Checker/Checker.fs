@@ -18,7 +18,7 @@ module Checker =
         match formula with
         | Zero -> List.replicate (numberOfStates M) csr.bottom
         | One -> List.replicate (numberOfStates M) csr.top
-        | Proposition(p) -> [] // should look up valuation of p from TS and apply it
+        | Proposition(p) -> Map.find p (getProposition M)
         | Function(fname,formulas) -> let func : 'D list -> 'D = Map.find fname csr.functions
                                       let valuations : 'D list list = List.map (fun f -> checkCTL<'D> M f csr) formulas
                                       let valuationColumns = transpose valuations
