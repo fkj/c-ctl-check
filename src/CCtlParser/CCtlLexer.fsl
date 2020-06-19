@@ -1,0 +1,42 @@
+{
+
+open System
+open CCtlCheck.CCtlParser.CCtlParser
+open FSharp.Text.Lexing
+open System.Text
+
+let newline (lexbuf : LexBuffer<_>) =
+    lexbuf.StartPos <- lexbuf.StartPos.NextLine
+
+}
+
+let char        = ['a'-'z' 'A'-'Z']
+let digit       = ['0'-'9']
+let whitespace  = ("\u00A0" | "\f" | "\t" | "\v" | ' ')+
+let newline     = ('\n' | '\r' '\n')
+let identifier  = char (['a'-'z' 'A'-'Z' '_']|digit)*
+let num         = (digit+) "." (digit+)
+
+rule tokenize = parse
+| whitespace { tokenize lexbuf }
+| newline    { newline lexbuf; tokenize lexbuf }
+| '(' { LPAREN }
+| ')' { RPAREN }
+| '[' { LBRACK }
+| ']' { RBRACK }
+| "sum" { SUM }
+| "prod" { PROD }
+| "glb" { GLB }
+| 'U' { UNTIL }
+| 'R' { RELEASE }
+| 'X' { NEXT }
+| '0' { ZERO }
+| '1' { ONE }
+| ',' { COMMA }
+| num { NUM(Double.Parse(LexBuffer<_>.LexemeString lexbuf)) }
+| identifier { let str = LexBuffer<_>.LexemeString lexbuf in IDENTIFIER(str) }
+| "true" { TRUE }
+| "false" { FALSE }
+| '+' { CHOOSE }
+| '*' { COMBINE }
+| eof { EOF }

@@ -1,0 +1,68 @@
+%{
+
+%}
+
+%token <string> IDENTIFIER
+%token LPAREN RPAREN
+%token SUM PROD GLB
+
+%token UNTIL RELEASE
+%token NEXT
+
+%token COMBINE
+%token CHOOSE
+
+%token ZERO
+%token ONE
+
+%token LBRACK RBRACK
+%token TRUE FALSE
+%token <System.Double> NUM
+
+%token COMMA
+
+%token EOF
+
+%left LPAREN RPAREN
+%left UNTIL RELEASE
+%left NEXT
+%left COMBINE
+%left CHOOSE
+%left ZERO ONE
+%left LBRACK RBRACK
+%left COMMA
+%nonassoc EOF
+
+%start start
+%type <PreFormula> start
+%type <PreFormula> formula
+%type <PreFormula list> formulas
+%type <PreQuantifier> quantifier
+%type <PreOperator> op
+
+%%
+
+start: formula EOF { $1 }
+
+formula:
+  | ZERO { PZero }
+  | ONE { POne }
+  | IDENTIFIER { PProposition($1) }
+  | IDENTIFIER LPAREN formulas RPAREN { PFunction($1, $3) }
+  | formula CHOOSE formula { PChoose($1, $3) }
+  | formula COMBINE formula { PCombine($1, $3) }
+  | quantifier LPAREN formula op formula RPAREN { PTemporal($1, $3, $4, $5) }
+  | quantifier NEXT formula { PNext($1,$3) }
+
+formulas:
+  | formula { [$1] }
+  | formula COMMA formulas { $1 :: $3 }
+
+quantifier:
+  | GLB { PGlb }
+  | SUM { PSum }
+  | PROD { PProduct }
+
+op:
+  | UNTIL { PUntil }
+  | RELEASE { PRelease }

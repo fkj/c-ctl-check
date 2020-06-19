@@ -6,6 +6,24 @@ module CCtlTypes =
     
     type Valuation<'D> = State -> 'D
 
+    /// Parsed c-CTL formulas with no domain, which are later translated into propert Formulas
+    type PreFormula =
+        | PZero
+        | POne
+        | PProposition of string
+        | PFunction of string * PreFormula list
+        | PChoose of PreFormula * PreFormula
+        | PCombine of PreFormula * PreFormula
+        | PTemporal of PreQuantifier * PreFormula * PreOperator * PreFormula
+        | PNext of PreQuantifier * PreFormula
+    and PreQuantifier =
+        | PGlb
+        | PSum
+        | PProduct
+    and PreOperator =
+        | PUntil
+        | PRelease
+
     /// A formula in c-CTL over domain 'D is recursively defined over the following cases:
     type Formula<'D> =
         | Zero
