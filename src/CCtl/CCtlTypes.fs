@@ -17,10 +17,36 @@ module CCtlTypes =
         | Temporal of Quantifier * Formula<'D> * Operator * Formula<'D>
         | Next of Quantifier * Formula<'D>
         | Valuation of 'D list
+    with override this.ToString() =
+           let commaList xs =
+             let commaSep x s =
+                match (x,s) with
+                | (x,"") -> x
+                | (x,p) -> x + ", " + p
+             in List.foldBack (commaSep) xs ""
+           in match this with
+              | Zero -> "\U0001D7CE"
+              | One -> "\U0001D7CF"
+              | Proposition(s) -> s
+              | Function(s,fs) -> s + "(" + commaList (List.map (fun x -> x.ToString()) fs) + ")"
+              | Choose(f1,f2) -> f1.ToString() + " + " + f2.ToString()
+              | Combine(f1,f2) -> f1.ToString() + " + " + f2.ToString()
+              | Temporal(q,f1,op,f2) -> q.ToString() + "(" + f1.ToString() + " " + op.ToString() + " " + f2.ToString() + ")"
+              | Next(q,f) -> q.ToString() + "(" + f.ToString() + ")"
+              | Valuation(ds) -> commaList (List.map (fun x -> x.ToString()) ds)
     and Quantifier =
         | Glb
         | Sum
         | Product
+    with override this.ToString() =
+          match this with
+          | Glb -> "\U00002293"
+          | Sum -> "\U00002211"
+          | Product -> "\U0000220F"
     and Operator =
         | Until
         | Release
+    with override this.ToString() =
+          match this with
+          | Until -> "U"
+          | Release -> "R"
