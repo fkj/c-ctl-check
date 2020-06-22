@@ -3,18 +3,22 @@ namespace CCtlCheck.App
 module Main =
     open Argu
     open System
+    open CCtlCheck
     open CCtlCheck.App.Cli
     open CCtlCheck.Checker.Examples
     open CCtlCheck.CCtlParser.Parser
     open CCtlCheck.CCtl.CCtlTypes
     open CCtlCheck.ConstraintSemirings.Examples
-
+    open CCtlCheck.TransitionSystems.Convert
+    open CCtlCheck.Checker.Checker
 
     /// The idea here is to circumvent the type system by making the important parts non-generic
     let printResult (arguments: ParseResults<CLIArguments>) csr =
         match csr with
         | Bool -> let cCtlFormula = translateF<bool> (parseCCtl (arguments.GetResult CCtl))
-                  in printfn "%s, %A" (cCtlFormula.ToString()) tmr1
+                  let ts = TransitionSystems.Convert.fromBoolFile (TSParser.Parser.parse (arguments.GetResult TS))
+                  let result = checkCTL<bool> ts cCtlFormula boolean
+                  in printfn "%s, %A" (cCtlFormula.ToString()) result
         | Opt -> let cCtlFormula = translateF<float> (parseCCtl (arguments.GetResult CCtl))
                  in printfn "%s" (cCtlFormula.ToString())
         | MaxMin -> let cCtlFormula = translateF<float> (parseCCtl (arguments.GetResult CCtl))

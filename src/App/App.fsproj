@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CCtlParser\CCtlParser.fsproj" />
+    <ProjectReference Include="..\TSParser\TSParser.fsproj" />
     <ProjectReference Include="..\Checker\Checker.fsproj" />
   </ItemGroup>
 
