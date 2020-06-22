@@ -1,9 +1,8 @@
-﻿namespace CCtlCheck.TSParser
+namespace CCtlCheck.TSParser
 
 module Parser =
     open System.IO
     open System
-    open System.Text.RegularExpressions
 
     let splitSystem (data: string list list) =
         let rec loop = function

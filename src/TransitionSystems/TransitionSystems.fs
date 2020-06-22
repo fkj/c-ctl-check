@@ -3,37 +3,29 @@ namespace CCtlCheck.TransitionSystems
 module Convert =
     open TSTypes
 
+    let splitLast list =
+        let last = List.last list
+        let rest = list.[..list.Length-2]
+        in (last, rest)
+
+    let collectSystem (matrix, propositions) toMap =
+        {
+            states = [0 .. List.length (List.item 0 matrix) - 1];
+            nextStates = fun s -> List.map System.Int32.Parse (List.item s matrix);
+            propositions = toMap propositions;
+        }
+
+    let toMap<'D> parser (props: string list list) : Map<string, 'D list> =
+      let convertList (prop: string list) : (string * 'D list) =
+        let (name, valuation) = splitLast prop
+        in (name, List.map parser valuation)
+      in Map.ofList (List.map convertList props)
+
     let fromFloatFile data : TransitionSystem<float> =
-        let matrix = fst data
-        let propositions = snd data
-        let toMap (props: string list list) : Map<string, float list> =
-            let convertList (prop: string list) : (string * float list) =
-              let name = List.last prop
-              // get everything except the last element
-              let valuation = prop.[..prop.Length-2]
-              in (name, List.map System.Double.Parse valuation)
-            in Map.ofList (List.map convertList props)
-        in {
-              states = [0 .. List.length (List.item 0 matrix) - 1];
-              nextStates = fun s -> List.map System.Int32.Parse (List.item s matrix);
-              propositions = toMap propositions;
-           }
+      collectSystem data (toMap System.Double.Parse)
 
     let fromBoolFile data : TransitionSystem<bool> =
-        let matrix = fst data
-        let propositions = snd data
-        let toMap (props: string list list) : Map<string, bool list> =
-            let convertList (prop: string list) : (string * bool list) =
-              let name = List.last prop
-              // get everything except the last element
-              let valuation = prop.[..prop.Length-2]
-              (name, List.map System.Boolean.Parse valuation)
-            in Map.ofList (List.map convertList props)
-        in {
-              states = [0 .. List.length (List.item 0 matrix) - 1];
-              nextStates = fun s -> List.map System.Int32.Parse (List.item s matrix);
-              propositions = toMap propositions;
-           }
+      collectSystem data (toMap System.Boolean.Parse)
 
 module Examples =
     open TSTypes

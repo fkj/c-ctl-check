@@ -2,35 +2,35 @@ namespace CCtlCheck.App
 
 module Main =
     open Argu
-    open System
     open CCtlCheck
     open CCtlCheck.App.Cli
-    open CCtlCheck.Checker.Examples
     open CCtlCheck.CCtlParser.Parser
-    open CCtlCheck.CCtl.CCtlTypes
     open CCtlCheck.ConstraintSemirings.Examples
-    open CCtlCheck.TransitionSystems.Convert
     open CCtlCheck.Checker.Checker
 
+    let computeBool (arguments: ParseResults<CLIArguments>) csr =
+        let cCtlFormula = translateF<bool> (parseCCtl (arguments.GetResult CCtl))
+        let ts = TransitionSystems.Convert.fromBoolFile (TSParser.Parser.parse (arguments.GetResult TS))
+        let result = checkCTL<bool> ts cCtlFormula csr
+        (ts, result)
+
+    let computeFloat (arguments: ParseResults<CLIArguments>) csr =
+        let cCtlFormula = translateF<float> (parseCCtl (arguments.GetResult CCtl))
+        let ts = TransitionSystems.Convert.fromFloatFile (TSParser.Parser.parse (arguments.GetResult TS))
+        let result = checkCTL<float> ts cCtlFormula csr
+        (ts, result)
+
     /// The idea here is to circumvent the type system by making the important parts non-generic
+    /// This is necessary because the CSRs have different types which are determined at runtime
     let printResult (arguments: ParseResults<CLIArguments>) csr =
         match csr with
-        | Bool -> let cCtlFormula = translateF<bool> (parseCCtl (arguments.GetResult CCtl))
-                  let ts = TransitionSystems.Convert.fromBoolFile (TSParser.Parser.parse (arguments.GetResult TS))
-                  let result = checkCTL<bool> ts cCtlFormula boolean
-                  in printfn "%s, %A" (cCtlFormula.ToString()) result
-        | Opt -> let cCtlFormula = translateF<float> (parseCCtl (arguments.GetResult CCtl))
-                 in printfn "%s" (cCtlFormula.ToString())
-        | MaxMin -> let cCtlFormula = translateF<float> (parseCCtl (arguments.GetResult CCtl))
-                    in printfn "%s" (cCtlFormula.ToString())
-        | Prob -> let cCtlFormula = translateF<float> (parseCCtl (arguments.GetResult CCtl))
-                  in printfn "%s" (cCtlFormula.ToString())
-        | Fuzzy -> let cCtlFormula = translateF<float> (parseCCtl (arguments.GetResult CCtl))
-                   in printfn "%s" (cCtlFormula.ToString())
-        | Power -> let cCtlFormula = translateF<float> (parseCCtl (arguments.GetResult CCtl))
-                   in printfn "%s" (cCtlFormula.ToString())
-        | Access -> let cCtlFormula = translateF<Set<AccessRights>> (parseCCtl (arguments.GetResult CCtl))
-                    in printfn "%s" (cCtlFormula.ToString())
+        | Bool -> computeBool arguments boolean |> printfn "%A"
+        | Opt -> computeFloat arguments optimization |> printfn "%A"
+        | MaxMin -> computeFloat arguments maxMin |> printfn "%A"
+        | Prob -> computeFloat arguments probabilistic |> printfn "%A"
+        | Fuzzy -> computeFloat arguments fuzzy |> printfn "%A"
+        | Power -> computeFloat arguments power |> printfn "%A"
+        | Access -> printfn "Not implemented yet..."
 
     [<EntryPoint>]
     let main argv =
