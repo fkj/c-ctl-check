@@ -41,8 +41,9 @@ module Checker =
                                           match op with
                                           | Until -> Choose(Valuation v2, Combine(Valuation v1, Next(q, Valuation v')))
                                           | Release -> Combine(Valuation v2, Choose(Valuation v1, Next(q, Valuation v')))
+                                      printfn "\nNext formula: %A" (formula.ToString())
                                       v <- checkCTL<'D> M formula csr
-                                      printfn "%A" v
+                                      printfn "Iteration result: %A" v
                                   v
         | Next(q,f) -> let v' : 'D list = checkCTL M f csr
                        let quantifier : 'D -> 'D -> 'D = match q with
