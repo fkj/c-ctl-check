@@ -48,10 +48,10 @@ module CCtlTypes =
               | Proposition(s) -> s
               | Function(s,fs) -> s + "(" + commaList (List.map (fun x -> x.ToString()) fs) + ")"
               | Choose(f1,f2) -> f1.ToString() + " + " + f2.ToString()
-              | Combine(f1,f2) -> f1.ToString() + " + " + f2.ToString()
+              | Combine(f1,f2) -> f1.ToString() + " \U000000D7 " + f2.ToString()
               | Temporal(q,f1,op,f2) -> q.ToString() + "(" + f1.ToString() + " " + op.ToString() + " " + f2.ToString() + ")"
               | Next(q,f) -> q.ToString() + "(" + f.ToString() + ")"
-              | Valuation(ds) -> commaList (List.map (fun x -> x.ToString()) ds)
+              | Valuation(ds) -> "[" + commaList (List.map (fun x -> x.ToString()) ds) + "]"
     and Quantifier =
         | Glb
         | Sum
