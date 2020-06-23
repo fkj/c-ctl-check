@@ -35,7 +35,14 @@ module Checker =
                                                    | Release -> csr.top
                                   let mutable v : 'D list = List.replicate M.states.Length start
                                   let mutable v' : 'D list = v
-                                  while List.forall2 (=) v' v do
+                                  let formula : Formula<'D> =
+                                      match op with
+                                      | Until -> Choose(Valuation v2, Combine(Valuation v1, Next(q, Valuation v')))
+                                      | Release -> Combine(Valuation v2, Choose(Valuation v1, Next(q, Valuation v')))
+                                  printfn "First formula: %A" (formula.ToString())
+                                  v <- checkCTL<'D> M formula csr
+                                  printfn "First result: %A" v
+                                  while not <| List.forall2 (=) v' v do
                                       v' <- v
                                       let formula : Formula<'D> =
                                           match op with
