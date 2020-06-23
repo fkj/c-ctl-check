@@ -20,16 +20,19 @@ module Main =
         let result = checkCTL<float> ts cCtlFormula csr
         (ts, result)
 
+    let printFinal result =
+        printfn "\nFinal result: %A" (snd result)
+
     /// The idea here is to circumvent the type system by making the important parts non-generic
     /// This is necessary because the CSRs have different types which are determined at runtime
     let printResult (arguments: ParseResults<CLIArguments>) csr =
         match csr with
-        | Bool -> computeBool arguments boolean |> printfn "%A"
-        | Opt -> computeFloat arguments optimization |> printfn "%A"
-        | MaxMin -> computeFloat arguments maxMin |> printfn "%A"
-        | Prob -> computeFloat arguments probabilistic |> printfn "%A"
-        | Fuzzy -> computeFloat arguments fuzzy |> printfn "%A"
-        | Power -> computeFloat arguments power |> printfn "%A"
+        | Bool -> computeBool arguments boolean |> printFinal
+        | Opt -> computeFloat arguments optimization |> printFinal
+        | MaxMin -> computeFloat arguments maxMin |> printFinal
+        | Prob -> computeFloat arguments probabilistic |> printFinal
+        | Fuzzy -> computeFloat arguments fuzzy |> printFinal
+        | Power -> computeFloat arguments power |> printFinal
         | Access -> printfn "Not implemented yet..."
 
     [<EntryPoint>]
