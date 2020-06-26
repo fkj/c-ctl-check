@@ -15,5 +15,5 @@ You need .NET Core to build this project.
 
 To build and run the project, write e.g.
 ```bash
-dotnet run -p src/App/App.fsproj --ts systems/large.ts --csr fuzzy "sum (prod (1 U value) R value)"
+dotnet run -p src/App/App.fsproj --ts systems/large.system --csr fuzzy "sum (prod (1 U value) R value)"
 ```
