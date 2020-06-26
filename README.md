@@ -9,3 +9,11 @@ A c-semiring has a domain and defines an additive and a multiplicative operation
 It may also be distributive, in which case the model checking problem for it is decidable.
 
 This project is based on the work presented by Lafuente and Montanari in the paper "Quantitative µ-calculus and CTL defined over constraint semirings".
+
+# Building
+You need .NET Core to build this project.
+
+To build and run the project, write e.g.
+```bash
+dotnet run -p src/App/App.fsproj --ts systems/large.ts --csr fuzzy "sum (prod (1 U value) R value)"
+```
